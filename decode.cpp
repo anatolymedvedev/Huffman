@@ -141,49 +141,53 @@ int main()
     count = 0;
     while (!file.eof())
     {
-		bool bit = tx & (1 << (7 - count));
-		if (bit) 
+        bool bit = tx & (1 << (7 - count));
+        if (bit) 
         {
             head = head->right;
         }
-		else 
+        else 
         {
             head = head->left;
         }
-		if (head->left == nullptr && head->right == nullptr)
+        if (head->left == nullptr && head->right == nullptr)
         {
-			result << head->sym;
-			head = root;
-		}
-		count++;
-        
-		if (count == 8)
-        {
-			count = 0;
-			tx = file.get();
-		}
-        if (file.peek() == EOF)
-        {
-            while(last_byte != count)
-            {
-                bit = tx & (1 << (7 - count));
-                if (bit)
-                {
-                    head = head->right;
-                }
-                else
-                {
-                    head = head->left;
-                }
-                if(head->right == nullptr && head->left == nullptr)
-                {
-                    result <<head->sym;
-                    head = root;
-                }
-                count++;
-            }
-            break;
+            result << head->sym;
+            head = root;
         }
+        count++;
+
+        if (count == 8)
+        {
+            count = 0;
+            tx = file.get();
+            if (last_byte == count)
+            {
+                continue;
+            }
+            if (file.peek() == EOF)
+            {
+                while(last_byte != count)
+                {
+                    bit = tx & (1 << (7 - count));
+                    if (bit)
+                    {
+                        head = head->right;
+                    }
+                    else
+                    {
+                        head = head->left;
+                    }
+                    if(head->right == nullptr && head->left== nullptr)
+                    {
+                        result <<head->sym;
+                        head = root;
+                    }
+                    count++;
+                }
+                break;
+            } 
+        }  
 	}
 
     file.close();
